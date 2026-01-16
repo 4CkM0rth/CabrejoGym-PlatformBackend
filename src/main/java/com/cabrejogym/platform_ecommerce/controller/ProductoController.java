@@ -2,6 +2,7 @@ package com.cabrejogym.platform_ecommerce.controller;
 
 import com.cabrejogym.platform_ecommerce.dtos.ProductoDTO;
 import com.cabrejogym.platform_ecommerce.service.ProductoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +17,7 @@ public class ProductoController {
     private final ProductoService productoService;
 
     @PostMapping
-    public ProductoDTO crear(@RequestBody ProductoDTO dto) {
+    public ProductoDTO crear(@Valid @RequestBody ProductoDTO dto) {
         return productoService.crearProducto(dto);
     }
 }
