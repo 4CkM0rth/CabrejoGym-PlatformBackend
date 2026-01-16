@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-add-auth-to-usuarios
+      author: cabrejogym
+      changes:
+        - addColumn:
+            tableName: usuarios
+            columns:
+              - column:
+                  name: password
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: true
+
+              - column:
+                  name: role
+                  type: VARCHAR(20)
+                  defaultValue: USER
+                  constraints:
+                    nullable: false
