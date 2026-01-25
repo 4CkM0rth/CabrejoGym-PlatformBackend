@@ -1,14 +1,11 @@
 databaseChangeLog:
-
   - changeSet:
-      id: 001-create-usuarios
+      id: 001-create-users
       author: cabrejogym
       changes:
-
         - createTable:
-            tableName: usuarios
+            tableName: users
             columns:
-
               - column:
                   name: id
                   type: BIGINT
@@ -18,13 +15,13 @@ databaseChangeLog:
                     nullable: false
 
               - column:
-                  name: nombre
+                  name: first_name
                   type: VARCHAR(100)
                   constraints:
                     nullable: false
 
               - column:
-                  name: apellido
+                  name: last_name
                   type: VARCHAR(100)
                   constraints:
                     nullable: false
@@ -37,5 +34,18 @@ databaseChangeLog:
                     unique: true
 
               - column:
-                  name: fecha_nacimiento
+                  name: birth_date
                   type: DATE
+
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: role
+                  type: VARCHAR(20)
+                  defaultValue: USER
+                  constraints:
+                    nullable: false

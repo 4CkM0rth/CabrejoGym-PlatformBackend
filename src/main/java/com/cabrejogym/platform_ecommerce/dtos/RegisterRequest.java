@@ -9,10 +9,10 @@ import java.time.LocalDate;
 
 public record RegisterRequest(
         @NotBlank @Size(max = 100)
-        String nombre,
+        String firstName,
 
         @NotBlank @Size(max = 100)
-        String apellido,
+        String lastName,
 
         @NotBlank @Email @Size(max = 150)
         String email,
@@ -21,6 +21,6 @@ public record RegisterRequest(
         String password,
 
         @Past
-        LocalDate fechaNacimiento
+        LocalDate birthDate
 ) {
 }

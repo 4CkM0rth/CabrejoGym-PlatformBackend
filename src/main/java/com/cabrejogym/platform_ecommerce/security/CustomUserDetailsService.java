@@ -1,7 +1,7 @@
 package com.cabrejogym.platform_ecommerce.security;
 
-import com.cabrejogym.platform_ecommerce.model.Usuario;
-import com.cabrejogym.platform_ecommerce.repository.UsuarioRepository;
+import com.cabrejogym.platform_ecommerce.model.User;
+import com.cabrejogym.platform_ecommerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,17 +15,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UsuarioRepository usuarioRepository;
+        private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario usuario = usuarioRepository.findByEmail(username)
+        User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("No existe usuario con email: " + username));
 
         return new org.springframework.security.core.userdetails.User(
-                usuario.getEmail(),
-                usuario.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getRole().name()))
+                user.getEmail(),
+                user.getPassword(),
+                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
         );
     }
 }

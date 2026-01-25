@@ -1,9 +1,9 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/001-create-usuarios.yaml
+      file: db/changelog/001-create-users.yaml
   - include:
-      file: db/changelog/002-create-productos.yaml
+      file: db/changelog/002-create-products.yaml
   - include:
-      file: db/changelog/003-add-auth-to-usuarios.yaml
+      file: db/changelog/003-create-orders.yaml
   - include:
-      file: db/changelog/004-insert-admin.yaml
+      file: db/changelog/004-create-order-items.yaml

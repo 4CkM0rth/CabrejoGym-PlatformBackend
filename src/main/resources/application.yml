@@ -20,5 +20,4 @@ app:
   jwt:
     issuer: "platform-ecommerce-api"
     access-token-minutes: 60
-    refresh-token-days: 7
     secret-base64: ${JWT_SECRET_BASE64}

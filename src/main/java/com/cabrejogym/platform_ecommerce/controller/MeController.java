@@ -2,8 +2,8 @@ package com.cabrejogym.platform_ecommerce.controller;
 
 import com.cabrejogym.platform_ecommerce.dtos.ChangePasswordRequest;
 import com.cabrejogym.platform_ecommerce.dtos.MeUpdateRequest;
-import com.cabrejogym.platform_ecommerce.dtos.UsuarioDTO;
-import com.cabrejogym.platform_ecommerce.service.UsuarioService;
+import com.cabrejogym.platform_ecommerce.dtos.UserDTO;
+import com.cabrejogym.platform_ecommerce.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,25 +15,25 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class MeController {
 
-    private final UsuarioService usuarioService;
+    private final UserService userService;
 
     @GetMapping
-    public UsuarioDTO me(Authentication authentication) {
+    public UserDTO me(Authentication authentication) {
         String email = authentication.getName();
-        return usuarioService.obtenerMiPerfil(email);
+        return userService.getMyProfile(email);
     }
 
     @PutMapping
-    public UsuarioDTO actualizar(@Valid @RequestBody MeUpdateRequest request, Authentication authentication) {
+    public UserDTO updated(@Valid @RequestBody MeUpdateRequest request, Authentication authentication) {
         String email = authentication.getName();
-        return usuarioService.actualizarMiPerfil(email, request);
+        return userService.updateMyProfile(email, request);
     }
 
     @PatchMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cambiarPassword(@Valid @RequestBody ChangePasswordRequest request, Authentication authentication) {
+    public void changePassword(@Valid @RequestBody ChangePasswordRequest request, Authentication authentication) {
         String email = authentication.getName();
-        usuarioService.cambiarMiPassword(email, request);
+        userService.changeMyPassword(email, request);
     }
 
 }

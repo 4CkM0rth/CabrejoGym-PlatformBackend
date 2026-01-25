@@ -5,18 +5,18 @@ import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
 
-public record UsuarioDTO(
+public record UserDTO(
         Long id,
 
         @NotBlank(message = "El nombre es obligatorio")
-        String nombre,
+        String firstName,
 
         @NotBlank(message = "El apellido es obligatorio")
-        String apellido,
+        String lastName,
 
         @Email
         @NotBlank
         String email,
 
-        LocalDate fechaNacimiento
+        LocalDate birthDate
 ) {}

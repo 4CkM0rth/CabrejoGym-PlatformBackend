@@ -7,31 +7,31 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "usuarios")
+@Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Usuario {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String nombre;
+    @Column(name="first_name", nullable = false)
+    private String firstName;
 
-    @Column(nullable = false)
-    private String apellido;
+    @Column(name="last_name", nullable = false)
+    private String lastName;
 
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "fecha_nacimiento")
-    private LocalDate fechaNacimiento;
+    @Column(name="birth_date")
+    private LocalDate birthDate;
 
-    @Column(name = "password")
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    private Role role;
+    @Column(nullable = false)
+    private Role role = Role.USER;
 }

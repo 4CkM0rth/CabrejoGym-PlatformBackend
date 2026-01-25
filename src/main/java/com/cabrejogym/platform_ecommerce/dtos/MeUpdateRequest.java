@@ -9,13 +9,13 @@ import java.time.LocalDate;
 public record MeUpdateRequest(
         @NotBlank(message = "El nombre es obligatorio")
         @Size(max = 100, message = "El nombre no puede superar 100 caracteres")
-        String nombre,
+        String firstName,
 
         @NotBlank(message = "El apellido es obligatorio")
         @Size(max = 100, message = "El apellido no puede superar 100 caracteres")
-        String apellido,
+        String lastName,
 
         @Past(message = "La fecha de nacimiento debe ser en el pasado")
-        LocalDate fechaNacimiento
+        LocalDate birthDate
 ) {
 }

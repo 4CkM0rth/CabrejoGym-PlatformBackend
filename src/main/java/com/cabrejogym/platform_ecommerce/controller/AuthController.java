@@ -1,9 +1,6 @@
 package com.cabrejogym.platform_ecommerce.controller;
 
-import com.cabrejogym.platform_ecommerce.dtos.AuthResponse;
-import com.cabrejogym.platform_ecommerce.dtos.LoginRequest;
-import com.cabrejogym.platform_ecommerce.dtos.RegisterRequest;
-import com.cabrejogym.platform_ecommerce.dtos.UsuarioDTO;
+import com.cabrejogym.platform_ecommerce.dtos.*;
 import com.cabrejogym.platform_ecommerce.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +16,7 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public UsuarioDTO register(@Valid @RequestBody RegisterRequest request) {
+    public UserDTO register(@Valid @RequestBody RegisterRequest request) {
         return authService.register(request);
     }
 
