@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/003-create-orders.yaml
   - include:
       file: db/changelog/004-create-order-items.yaml
+  - include:
+      file: db/changelog/005-add-stock-to-products.yaml

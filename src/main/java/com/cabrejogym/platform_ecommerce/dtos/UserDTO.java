@@ -17,6 +17,5 @@ public record UserDTO(
         @Email
         @NotBlank
         String email,
-
         LocalDate birthDate
 ) {}

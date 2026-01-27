@@ -27,7 +27,8 @@ public class ProductServiceImpl implements ProductService {
                 dto.description(),
                 dto.price(),
                 dto.hasDiscount(),
-                dto.discountPercent()
+                dto.discountPercent(),
+                dto.stock()
         );
 
         Product saved = productRepository.save(product);
@@ -73,6 +74,16 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(id);
     }
 
+    @Override
+    @Transactional
+    public ProductDTO updateStock(Long id, int stock) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
+
+        product.setStock(stock);
+        return toDto(productRepository.save(product));
+    }
+
     private ProductDTO toDto(Product product) {
         return new ProductDTO(
                 product.getId(),
@@ -80,7 +91,8 @@ public class ProductServiceImpl implements ProductService {
                 product.getDescription(),
                 product.getPrice(),
                 product.getHasDiscount(),
-                product.getDiscountPercent()
+                product.getDiscountPercent(),
+                product.getStock()
         );
     }
 }

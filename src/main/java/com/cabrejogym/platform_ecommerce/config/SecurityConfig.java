@@ -30,25 +30,31 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
-
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
+                        // USER
                         .requestMatchers("/api/me/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/orders").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/orders/me/**").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/orders/me/**").authenticated()
 
+                        // ADMIN - ORDERS
                         .requestMatchers(HttpMethod.GET, "/api/orders").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/orders/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/orders/*/status").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/orders/*/cancel").hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+                        // ADMIN - PRODUCTS
                         .requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/products/**").hasRole("ADMIN")
 
+                        // ADMIN - USERS
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 );
+
 
         return http.build();
     }

@@ -50,4 +50,15 @@ public class GlobalExceptionHandler {
                 )
         );
     }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Map<String, Object>> handleForbidden(ForbiddenException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                Map.of(
+                        "timestamp", Instant.now(),
+                        "error", ex.getMessage()
+                )
+        );
+    }
+
 }

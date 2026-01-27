@@ -8,5 +8,6 @@ public record ProductDTO(
         String description,
         BigDecimal price,
         Boolean hasDiscount,
-        BigDecimal discountPercent
+        BigDecimal discountPercent,
+        Integer stock
 ) {}

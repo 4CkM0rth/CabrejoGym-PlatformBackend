@@ -7,7 +7,10 @@ import com.cabrejogym.platform_ecommerce.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,7 +38,6 @@ public class OrderController {
         return orderService.getMyOrderById(auth.getName(), id);
     }
 
-    // ADMIN
     @GetMapping
     public List<OrderDTO> all() {
         return orderService.listAll();
@@ -45,4 +47,14 @@ public class OrderController {
     public OrderDTO changeStatus(@PathVariable Long id, @RequestParam OrderStatus status) {
         return orderService.updateStatus(id, status);
     }
+
+    @PatchMapping("/me/{id}/cancel")
+    public OrderDTO cancelMyOrder(@PathVariable Long id, Authentication auth) {
+        return orderService.cancelMyOrder(auth.getName(), id);
+    }
+    @PatchMapping("/{id}/cancel")
+    public OrderDTO cancelAnyOrder(@PathVariable Long id) {
+        return orderService.cancelAnyOrder(id);
+    }
+
 }

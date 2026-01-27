@@ -11,7 +11,9 @@ public interface OrderService {
     List<OrderDTO> listMyOrders(String email);
     OrderDTO getMyOrderById(String email, Long orderId);
 
-    // ADMIN
     List<OrderDTO> listAll();
     OrderDTO updateStatus(Long orderId, OrderStatus status);
+    OrderDTO cancelMyOrder(String email, Long orderId);
+    OrderDTO cancelAnyOrder(Long orderId);
+
 }
