@@ -1,0 +1,21 @@
+package com.cabrejogym.platform_ecommerce.application.dtos.request;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
+
+import java.time.LocalDate;
+
+public record MeUpdateRequest(
+        @NotBlank(message = "El nombre es obligatorio")
+        @Size(max = 100, message = "El nombre no puede superar 100 caracteres")
+        String firstName,
+
+        @NotBlank(message = "El apellido es obligatorio")
+        @Size(max = 100, message = "El apellido no puede superar 100 caracteres")
+        String lastName,
+
+        @Past(message = "La fecha de nacimiento debe ser en el pasado")
+        LocalDate birthDate
+) {
+}

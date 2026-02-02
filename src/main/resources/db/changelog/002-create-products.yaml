@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-products
+      author: cabrejogym
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: price
+                  type: DECIMAL(19,2)
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: has_discount
+                  type: BIT(1)
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: discount_percent
+                  type: DECIMAL(5,2)
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
