@@ -1,10 +1,10 @@
 package com.cabrejogym.platform_ecommerce.controller;
 
-import com.cabrejogym.platform_ecommerce.dtos.UserDTO;
-import com.cabrejogym.platform_ecommerce.dtos.ChangeEmailRequest;
-import com.cabrejogym.platform_ecommerce.dtos.ChangeRoleRequest;
-import com.cabrejogym.platform_ecommerce.dtos.ResetPasswordRequest;
-import com.cabrejogym.platform_ecommerce.service.UserService;
+import com.cabrejogym.platform_ecommerce.application.dtos.response.UserDTO;
+import com.cabrejogym.platform_ecommerce.application.dtos.request.ChangeEmailRequest;
+import com.cabrejogym.platform_ecommerce.application.dtos.request.ChangeRoleRequest;
+import com.cabrejogym.platform_ecommerce.application.dtos.request.ResetPasswordRequest;
+import com.cabrejogym.platform_ecommerce.application.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

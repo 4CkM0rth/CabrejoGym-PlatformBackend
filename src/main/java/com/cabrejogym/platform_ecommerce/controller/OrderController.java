@@ -1,16 +1,13 @@
 package com.cabrejogym.platform_ecommerce.controller;
 
-import com.cabrejogym.platform_ecommerce.dtos.CreateOrderRequest;
-import com.cabrejogym.platform_ecommerce.dtos.OrderDTO;
-import com.cabrejogym.platform_ecommerce.model.OrderStatus;
-import com.cabrejogym.platform_ecommerce.service.OrderService;
+import com.cabrejogym.platform_ecommerce.application.dtos.request.CreateOrderRequest;
+import com.cabrejogym.platform_ecommerce.application.dtos.response.OrderDTO;
+import com.cabrejogym.platform_ecommerce.domain.enums.OrderStatus;
+import com.cabrejogym.platform_ecommerce.application.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

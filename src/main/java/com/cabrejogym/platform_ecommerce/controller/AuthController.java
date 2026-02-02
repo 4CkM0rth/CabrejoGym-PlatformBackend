@@ -1,7 +1,10 @@
 package com.cabrejogym.platform_ecommerce.controller;
 
-import com.cabrejogym.platform_ecommerce.dtos.*;
-import com.cabrejogym.platform_ecommerce.service.AuthService;
+import com.cabrejogym.platform_ecommerce.application.dtos.response.AuthResponse;
+import com.cabrejogym.platform_ecommerce.application.dtos.request.LoginRequest;
+import com.cabrejogym.platform_ecommerce.application.dtos.request.RegisterRequest;
+import com.cabrejogym.platform_ecommerce.application.dtos.response.UserDTO;
+import com.cabrejogym.platform_ecommerce.application.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

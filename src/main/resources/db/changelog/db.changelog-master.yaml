@@ -9,3 +9,9 @@ databaseChangeLog:
       file: db/changelog/004-create-order-items.yaml
   - include:
       file: db/changelog/005-add-stock-to-products.yaml
+  - include:
+      file: db/changelog/006-create-refunds.yaml
+  - include:
+      file: db/changelog/008-create-branches.yaml
+  - include:
+      file: db/changelog/00X-fix-branches-active-type.yaml
