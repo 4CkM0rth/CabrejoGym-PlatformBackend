@@ -7,12 +7,11 @@ import com.cabrejogym.platform_ecommerce.application.dtos.request.UpdateBranchRe
 import java.util.List;
 
 public interface BranchService {
-    // Público
     List<BranchDTO> listActive();
-    BranchDTO getById(Long id);
+    BranchDTO getActiveById(Long id);
 
-    // Admin
     List<BranchDTO> listAll();
+    BranchDTO getById(Long id);
     BranchDTO create(CreateBranchRequest request);
     BranchDTO update(Long id, UpdateBranchRequest request);
     BranchDTO activate(Long id);

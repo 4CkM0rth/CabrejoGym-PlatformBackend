@@ -18,6 +18,7 @@ public interface BranchMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     void updateEntity(UpdateBranchRequest request, @MappingTarget Branch branch);
 }

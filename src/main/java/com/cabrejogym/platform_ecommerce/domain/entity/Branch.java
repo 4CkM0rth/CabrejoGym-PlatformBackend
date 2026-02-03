@@ -41,10 +41,10 @@ public class Branch {
     @Column(precision = 10, scale = 7)
     private BigDecimal longitude;
 
-    @Column(nullable = false)
+    @Column(name = "active", nullable = false)
     private Boolean active = true;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @PrePersist

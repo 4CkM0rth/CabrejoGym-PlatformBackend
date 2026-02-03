@@ -13,5 +13,3 @@ databaseChangeLog:
       file: db/changelog/006-create-refunds.yaml
   - include:
       file: db/changelog/008-create-branches.yaml
-  - include:
-      file: db/changelog/00X-fix-branches-active-type.yaml

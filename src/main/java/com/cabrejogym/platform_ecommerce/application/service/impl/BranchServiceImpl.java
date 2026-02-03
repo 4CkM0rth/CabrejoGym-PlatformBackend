@@ -32,6 +32,18 @@ public class BranchServiceImpl implements BranchService {
 
     @Override
     @Transactional(readOnly = true)
+    public BranchDTO getActiveById(Long id) {
+        Branch branch = getOrThrow(id);
+
+        if (!Boolean.TRUE.equals(branch.getActive())) {
+            throw new ResourceNotFoundException("Sede no encontrada con id: " + id);
+        }
+
+        return branchMapper.toDto(branch);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public BranchDTO getById(Long id) {
         return branchMapper.toDto(getOrThrow(id));
     }
@@ -58,7 +70,6 @@ public class BranchServiceImpl implements BranchService {
     public BranchDTO update(Long id, UpdateBranchRequest request) {
         Branch branch = getOrThrow(id);
         branchMapper.updateEntity(request, branch);
-
         return branchMapper.toDto(branchRepository.save(branch));
     }
 
@@ -82,4 +93,6 @@ public class BranchServiceImpl implements BranchService {
         return branchRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sede no encontrada con id: " + id));
     }
+
+
 }

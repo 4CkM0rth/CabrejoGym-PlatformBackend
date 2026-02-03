@@ -1,9 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      id: 00X-fix-branches-active-type
-      author: sebastian
-      changes:
-        - modifyDataType:
-            tableName: branches
-            columnName: active
-            newDataType: BIT(1)

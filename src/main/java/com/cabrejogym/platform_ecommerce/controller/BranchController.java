@@ -25,16 +25,22 @@ public class BranchController {
         return branchService.listActive();
     }
 
-    @GetMapping("/{id}")
-    public BranchDTO getById(@PathVariable Long id) {
+    @GetMapping("/admin/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public BranchDTO getByIdAdmin(@PathVariable Long id) {
         return branchService.getById(id);
     }
 
     // Admin
-    @GetMapping("/admin")
+    @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
     public List<BranchDTO> listAll() {
         return branchService.listAll();
+    }
+
+    @GetMapping("/{id}")
+    public BranchDTO getById(@PathVariable Long id) {
+        return branchService.getActiveById(id);
     }
 
     @PostMapping
