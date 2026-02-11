@@ -10,10 +10,13 @@ public final class OrderStatusTransitionValidator {
 
     private static final Map<OrderStatus, Set<OrderStatus>> ALLOWED_TRANSITIONS = Map.of(
             OrderStatus.PENDING, Set.of(OrderStatus.PAID, OrderStatus.CANCELLED),
-            OrderStatus.PAID, Set.of(OrderStatus.SHIPPED, OrderStatus.CANCELLED),
-            OrderStatus.SHIPPED, Set.of(OrderStatus.DELIVERED),
-            OrderStatus.DELIVERED, Set.of(),
-            OrderStatus.CANCELLED, Set.of()
+            OrderStatus.PAID, Set.of(OrderStatus.SHIPPED, OrderStatus.RETURN_REQUESTED),
+            OrderStatus.SHIPPED, Set.of(OrderStatus.DELIVERED, OrderStatus.RETURN_REQUESTED),
+            OrderStatus.DELIVERED, Set.of(OrderStatus.RETURN_REQUESTED),
+            OrderStatus.CANCELLED, Set.of(),
+            OrderStatus.RETURN_REQUESTED, Set.of(OrderStatus.REFUNDED),
+            OrderStatus.REFUNDED, Set.of()
+
     );
 
     private OrderStatusTransitionValidator() {

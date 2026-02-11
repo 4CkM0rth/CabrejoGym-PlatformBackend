@@ -6,6 +6,7 @@ import com.cabrejogym.platform_ecommerce.application.dtos.response.RefundDTO;
 import com.cabrejogym.platform_ecommerce.application.service.RefundService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -19,10 +20,6 @@ import java.util.List;
 public class RefundController {
 
     private final RefundService refundService;
-
-    // =========================
-    // USER
-    // =========================
 
     @PostMapping("/me")
     @ResponseStatus(HttpStatus.CREATED)
@@ -38,16 +35,6 @@ public class RefundController {
     @GetMapping("/me/{id}")
     public RefundDTO getMyRefundById(@PathVariable Long id, Authentication auth) {
         return refundService.getMyRefundById(auth.getName(), id);
-    }
-
-    // =========================
-    // ADMIN
-    // =========================
-
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<RefundDTO> listAll() {
-        return refundService.listAll();
     }
 
     @PatchMapping("/{id}/approve")
@@ -66,5 +53,12 @@ public class RefundController {
     @PreAuthorize("hasRole('ADMIN')")
     public RefundDTO markAsRefunded(@PathVariable Long id, @Valid @RequestBody AdminRefundDecisionRequest request) {
         return refundService.markAsRefunded(id, request);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public Page<RefundDTO> listAll(@RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "20") int size) {
+        return refundService.listAll(page, size);
     }
 }

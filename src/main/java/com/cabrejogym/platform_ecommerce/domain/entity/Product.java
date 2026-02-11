@@ -5,15 +5,19 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "products")
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(nullable = false)
@@ -28,7 +32,7 @@ public class Product {
     @Column(name = "has_discount", nullable = false)
     private Boolean hasDiscount = false;
 
-    @Column(name = "discount_percent", precision = 5, scale = 2)
+    @Column(name = "discount_percent", nullable = false, precision = 5, scale = 2)
     private BigDecimal discountPercent = BigDecimal.ZERO;
 
     @Column(nullable = false)

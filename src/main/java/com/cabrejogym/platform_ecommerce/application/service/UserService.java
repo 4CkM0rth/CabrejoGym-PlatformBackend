@@ -6,12 +6,12 @@ import com.cabrejogym.platform_ecommerce.application.dtos.response.UserDTO;
 import com.cabrejogym.platform_ecommerce.application.dtos.request.ChangeEmailRequest;
 import com.cabrejogym.platform_ecommerce.application.dtos.request.ChangeRoleRequest;
 import com.cabrejogym.platform_ecommerce.application.dtos.request.ResetPasswordRequest;
+import org.springframework.data.domain.Page;
 
 
 import java.util.List;
 
 public interface UserService {
-    List<UserDTO> all();
     UserDTO getById(Long id);
     UserDTO update(Long id, UserDTO dto);
     void delete(Long id);
@@ -23,5 +23,6 @@ public interface UserService {
     UserDTO changeEmailAdmin(Long id, ChangeEmailRequest request);
     UserDTO changeRoleAdmin(Long id, ChangeRoleRequest request);
     void resetPasswordAdmin(Long id, ResetPasswordRequest request);
+    Page<UserDTO> all(int page, int size);
 
 }

@@ -6,14 +6,19 @@ import com.cabrejogym.platform_ecommerce.application.dtos.response.UserDTO;
 import com.cabrejogym.platform_ecommerce.application.dtos.request.ChangeEmailRequest;
 import com.cabrejogym.platform_ecommerce.application.dtos.request.ChangeRoleRequest;
 import com.cabrejogym.platform_ecommerce.application.dtos.request.ResetPasswordRequest;
+import com.cabrejogym.platform_ecommerce.application.mapper.user.UserMapper;
 import com.cabrejogym.platform_ecommerce.infrastructure.exceptions.ConflictException;
 import com.cabrejogym.platform_ecommerce.infrastructure.exceptions.ResourceNotFoundException;
 import com.cabrejogym.platform_ecommerce.domain.entity.User;
 import com.cabrejogym.platform_ecommerce.infrastructure.repository.UserRepository;
 import com.cabrejogym.platform_ecommerce.application.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,22 +28,18 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
     @Override
-    public List<UserDTO> all() {
-        return userRepository.findAll().stream()
-                .map(this::toDto)
-                .toList();
-    }
-
-    @Override
+    @Transactional(readOnly = true)
     public UserDTO getById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
-        return toDto(user);
+        return userMapper.toDto(user);
     }
 
     @Override
+    @Transactional
     public UserDTO update(Long id, UserDTO dto) {
         User existing = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
@@ -52,10 +53,11 @@ public class UserServiceImpl implements UserService {
         existing.setBirthDate(dto.birthDate());
 
         User updated = userRepository.save(existing);
-        return toDto(updated);
+        return userMapper.toDto(updated);
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("Usuario no encontrado con id: " + id);
@@ -64,13 +66,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDTO getMyProfile(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con email: " + email));
-        return toDto(user);
+        return userMapper.toDto(user);
     }
 
     @Override
+    @Transactional
     public UserDTO updateMyProfile(String email, MeUpdateRequest request) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con email: " + email));
@@ -80,10 +84,11 @@ public class UserServiceImpl implements UserService {
         user.setBirthDate(request.birthDate());
 
         User updated = userRepository.save(user);
-        return toDto(updated);
+        return userMapper.toDto(updated);
     }
 
     @Override
+    @Transactional
     public void changeMyPassword(String email, ChangePasswordRequest request) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con email: " + email));
@@ -96,17 +101,8 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    private UserDTO toDto(User u) {
-        return new UserDTO(
-                u.getId(),
-                u.getFirstName(),
-                u.getLastName(),
-                u.getEmail(),
-                u.getBirthDate()
-        );
-    }
-
     @Override
+    @Transactional
     public UserDTO changeEmailAdmin(Long id, ChangeEmailRequest request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
@@ -116,19 +112,21 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setEmail(request.email());
-        return toDto(userRepository.save(user));
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
+    @Transactional
     public UserDTO changeRoleAdmin(Long id, ChangeRoleRequest request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
 
         user.setRole(request.role());
-        return toDto(userRepository.save(user));
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
+    @Transactional
     public void resetPasswordAdmin(Long id, ResetPasswordRequest request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
@@ -137,4 +135,12 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserDTO> all(int page, int size) {
+        int safePage = Math.max(page, 0);
+        int safeSize = Math.min(Math.max(size, 1), 100);
+        return userRepository.findAll(PageRequest.of(safePage, safeSize, Sort.by("id").descending()))
+                .map(userMapper::toDto);
+    }
 }

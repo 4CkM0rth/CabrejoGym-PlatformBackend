@@ -4,8 +4,10 @@ import com.cabrejogym.platform_ecommerce.application.dtos.request.CreateOrderIte
 import com.cabrejogym.platform_ecommerce.application.dtos.request.CreateOrderRequest;
 import com.cabrejogym.platform_ecommerce.application.dtos.request.CreateRefundRequest;
 import com.cabrejogym.platform_ecommerce.application.dtos.response.OrderDTO;
-import com.cabrejogym.platform_ecommerce.application.dtos.response.OrderItemDTO;
 import com.cabrejogym.platform_ecommerce.application.mapper.order.OrderMapper;
+import com.cabrejogym.platform_ecommerce.application.rule.OrderStatusTransitionValidator;
+import com.cabrejogym.platform_ecommerce.application.service.OrderService;
+import com.cabrejogym.platform_ecommerce.application.service.RefundService;
 import com.cabrejogym.platform_ecommerce.domain.entity.Order;
 import com.cabrejogym.platform_ecommerce.domain.entity.OrderItem;
 import com.cabrejogym.platform_ecommerce.domain.entity.Product;
@@ -17,10 +19,10 @@ import com.cabrejogym.platform_ecommerce.infrastructure.exceptions.ResourceNotFo
 import com.cabrejogym.platform_ecommerce.infrastructure.repository.OrderRepository;
 import com.cabrejogym.platform_ecommerce.infrastructure.repository.ProductRepository;
 import com.cabrejogym.platform_ecommerce.infrastructure.repository.UserRepository;
-import com.cabrejogym.platform_ecommerce.application.service.OrderService;
-import com.cabrejogym.platform_ecommerce.application.service.RefundService;
-import com.cabrejogym.platform_ecommerce.application.rule.OrderStatusTransitionValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +35,8 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private static final int MONEY_SCALE = 2;
+    private static final int DEFAULT_PAGE_SIZE = 20;
+    private static final int MAX_PAGE_SIZE = 100;
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
@@ -47,9 +51,11 @@ public class OrderServiceImpl implements OrderService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con email: " + email));
 
+        validateNoDuplicateProducts(request);
+
         Order order = new Order();
         order.setUser(user);
-        order.setStatus(OrderStatus.PENDING);
+        applyStatus(order, OrderStatus.PENDING);
 
         BigDecimal total = BigDecimal.ZERO;
 
@@ -86,6 +92,33 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
+    public OrderDTO getAnyOrderById(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Orden no encontrada con id: " + orderId));
+        return orderMapper.toDto(order);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<OrderDTO> listAll(int page, int size) {
+
+        int safePage = Math.max(page, 0);
+
+        int normalizedSize = (size <= 0) ? DEFAULT_PAGE_SIZE : size;
+        int safeSize = Math.min(normalizedSize, MAX_PAGE_SIZE);
+
+        PageRequest pageable = PageRequest.of(
+                safePage,
+                safeSize,
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+
+        return orderRepository.findAll(pageable).map(orderMapper::toDto);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
     public List<OrderDTO> listMyOrders(String email) {
         return orderRepository.findByUser_EmailOrderByCreatedAtDesc(email)
                 .stream()
@@ -106,24 +139,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<OrderDTO> listAll() {
-        return orderRepository.findAll()
-                .stream()
-                .map(orderMapper::toDto)
-                .toList();
-    }
-
-    @Override
     @Transactional
     public OrderDTO updateStatus(Long orderId, OrderStatus newStatus) {
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order no encontrado con id: " + orderId));
+        Order order = orderRepository.findByIdWithItemsForUpdate(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Orden no encontrada con id: " + orderId));
 
-        OrderStatusTransitionValidator.validate(order.getStatus(), newStatus);
+        applyStatus(order, newStatus);
 
-        order.setStatus(newStatus);
         return orderMapper.toDto(orderRepository.save(order));
     }
 
@@ -131,7 +154,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDTO cancelMyOrder(String email, Long orderId) {
 
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findByIdWithItemsForUpdate(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Orden no encontrada con id: " + orderId));
 
         requireOwner(order, email);
@@ -141,18 +164,23 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (order.getStatus() != OrderStatus.PENDING) {
+
             if (order.getStatus() == OrderStatus.PAID) {
+
                 refundService.createMyRefund(
                         email,
                         new CreateRefundRequest(order.getId(), "Cancelación solicitada por el usuario (orden pagada)")
                 );
-                return orderMapper.toDto(order);
+
+                applyStatus(order, OrderStatus.RETURN_REQUESTED);
+                return orderMapper.toDto(orderRepository.save(order));
             }
+
             throw new ConflictException("No se puede cancelar la orden en estado: " + order.getStatus());
         }
 
         restock(order);
-        order.setStatus(OrderStatus.CANCELLED);
+        applyStatus(order, OrderStatus.CANCELLED);
 
         return orderMapper.toDto(orderRepository.save(order));
     }
@@ -164,17 +192,15 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findByIdWithItemsForUpdate(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Orden no encontrada con id: " + orderId));
 
-        return cancelAndRestock(order);
-    }
-
-    private OrderDTO cancelAndRestock(Order order) {
-
         if (order.getStatus() == OrderStatus.PAID) {
+
             refundService.createMyRefund(
                     order.getUser().getEmail(),
                     new CreateRefundRequest(order.getId(), "Cancelación admin (orden pagada)")
             );
-            return orderMapper.toDto(order);
+
+            applyStatus(order, OrderStatus.RETURN_REQUESTED);
+            return orderMapper.toDto(orderRepository.save(order));
         }
 
         if (order.getStatus() == OrderStatus.CANCELLED) {
@@ -186,9 +212,19 @@ public class OrderServiceImpl implements OrderService {
         }
 
         restock(order);
-        order.setStatus(OrderStatus.CANCELLED);
+        applyStatus(order, OrderStatus.CANCELLED);
 
         return orderMapper.toDto(orderRepository.save(order));
+    }
+
+    private void applyStatus(Order order, OrderStatus next) {
+        OrderStatus current = order.getStatus();
+        if (current == null) {
+            order.setStatus(next);
+            return;
+        }
+        OrderStatusTransitionValidator.validate(current, next);
+        order.setStatus(next);
     }
 
     private void requireOwner(Order order, String email) {
@@ -230,18 +266,30 @@ public class OrderServiceImpl implements OrderService {
     private BigDecimal calculateUnitPrice(Product product) {
 
         BigDecimal unitPrice = product.getPrice();
+        BigDecimal percent = product.getDiscountPercent();
 
         if (Boolean.TRUE.equals(product.getHasDiscount())
-                && product.getDiscountPercent() != null
-                && product.getDiscountPercent().compareTo(BigDecimal.ZERO) > 0) {
+                && percent != null
+                && percent.compareTo(BigDecimal.ZERO) > 0) {
 
             BigDecimal discount = unitPrice
-                    .multiply(product.getDiscountPercent())
+                    .multiply(percent)
                     .divide(BigDecimal.valueOf(100), MONEY_SCALE, RoundingMode.HALF_UP);
 
             unitPrice = unitPrice.subtract(discount);
         }
 
         return unitPrice.setScale(MONEY_SCALE, RoundingMode.HALF_UP);
+    }
+
+    private void validateNoDuplicateProducts(CreateOrderRequest request) {
+        long distinct = request.items().stream()
+                .map(CreateOrderItemRequest::productId)
+                .distinct()
+                .count();
+
+        if (distinct != request.items().size()) {
+            throw new ConflictException("La orden no puede contener productos repetidos. Unifica cantidades por producto.");
+        }
     }
 }
