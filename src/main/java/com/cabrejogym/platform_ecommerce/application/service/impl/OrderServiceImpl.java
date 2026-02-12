@@ -55,9 +55,10 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = new Order();
         order.setUser(user);
+        order.setOrderNumber(generateSimpleOrderNumber());
         applyStatus(order, OrderStatus.PENDING);
 
-        BigDecimal total = BigDecimal.ZERO;
+        BigDecimal subtotal = BigDecimal.ZERO;
 
         for (CreateOrderItemRequest itemReq : request.items()) {
 
@@ -79,15 +80,23 @@ public class OrderServiceImpl implements OrderService {
             item.setLineTotal(lineTotal);
 
             order.getItems().add(item);
-            total = total.add(lineTotal);
+            subtotal = subtotal.add(lineTotal);
 
             product.setStock(product.getStock() - itemReq.quantity());
         }
 
-        order.setTotal(total.setScale(MONEY_SCALE, RoundingMode.HALF_UP));
+        order.setSubtotal(subtotal.setScale(MONEY_SCALE, RoundingMode.HALF_UP));
+        order.setDiscount(BigDecimal.ZERO);
+        order.setTax(BigDecimal.ZERO);
+        order.setShipping(BigDecimal.ZERO);
+        order.setTotal(subtotal.setScale(MONEY_SCALE, RoundingMode.HALF_UP));
 
         Order saved = orderRepository.save(order);
         return orderMapper.toDto(saved);
+    }
+
+    private String generateSimpleOrderNumber() {
+        return "ORD-" + System.currentTimeMillis();
     }
 
     @Override

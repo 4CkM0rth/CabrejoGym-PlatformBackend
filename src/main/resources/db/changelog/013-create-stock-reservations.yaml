@@ -1,0 +1,83 @@
+databaseChangeLog:
+  - changeSet:
+      id: 013-create-stock-reservations
+      author: sebastian
+      validCheckSum: ANY
+      changes:
+        - createTable:
+            tableName: stock_reservations
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: product_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: quantity
+                  type: INT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: session_id
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: expires_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: active
+                  type: TINYINT(1)
+                  defaultValueNumeric: 1
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: stock_reservations
+            baseColumnNames: product_id
+            referencedTableName: products
+            referencedColumnNames: id
+            constraintName: fk_stock_reservations_product
+            onDelete: CASCADE
+
+        - createIndex:
+            tableName: stock_reservations
+            indexName: idx_stock_reservations_expires_at
+            columns:
+              - column:
+                  name: expires_at
+
+        - createIndex:
+            tableName: stock_reservations
+            indexName: idx_stock_reservations_session_id
+            columns:
+              - column:
+                  name: session_id
+
+        - createIndex:
+            tableName: stock_reservations
+            indexName: idx_stock_reservations_product_id
+            columns:
+              - column:
+                  name: product_id

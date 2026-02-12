@@ -15,3 +15,15 @@ databaseChangeLog:
       file: db/changelog/007-add-unique-refunds-order-id.yaml
   - include:
       file: db/changelog/008-create-branches.yaml
+  - include:
+      file: db/changelog/009-create-carts.yaml
+  - include:
+      file: db/changelog/010-create-cart-items.yaml
+  - include:
+      file: db/changelog/011-create-addresses.yaml
+  - include:
+      file: db/changelog/012-create-coupons.yaml
+  - include:
+      file: db/changelog/013-create-stock-reservations.yaml
+  - include:
+      file: db/changelog/014-update-orders-add-checkout-fields.yaml

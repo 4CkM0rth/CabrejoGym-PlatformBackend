@@ -1,0 +1,64 @@
+databaseChangeLog:
+  - changeSet:
+      id: 009-create-carts
+      author: sebastian
+      changes:
+        - createTable:
+            tableName: carts
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+
+              - column:
+                  name: session_id
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+                    unique: true
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: carts
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_carts_user
+            onDelete: CASCADE
+
+        - createIndex:
+            tableName: carts
+            indexName: idx_carts_user_id
+            columns:
+              - column:
+                  name: user_id
+
+        - createIndex:
+            tableName: carts
+            indexName: idx_carts_session_id
+            columns:
+              - column:
+                  name: session_id

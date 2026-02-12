@@ -33,8 +33,35 @@ public class Order {
     @Column(nullable = false, length = 20)
     private OrderStatus status;
 
+    @Column(nullable = false, unique = true)
+    private String orderNumber;
+
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal subtotal;
+
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal discount = BigDecimal.ZERO;
+
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal tax = BigDecimal.ZERO;
+
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal shipping = BigDecimal.ZERO;
+
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal total;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "coupon_id")
+    private Coupon coupon;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shipping_address_id")
+    private Address shippingAddress;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_address_id")
+    private Address billingAddress;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;

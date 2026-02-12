@@ -1,0 +1,95 @@
+databaseChangeLog:
+  - changeSet:
+      id: 014-update-orders-add-checkout-fields
+      author: sebastian
+      changes:
+        - addColumn:
+            tableName: orders
+            columns:
+              - column:
+                  name: order_number
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+                    unique: true
+
+              - column:
+                  name: subtotal
+                  type: DECIMAL(19,2)
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: discount
+                  type: DECIMAL(19,2)
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: tax
+                  type: DECIMAL(19,2)
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: shipping
+                  type: DECIMAL(19,2)
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: coupon_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+
+              - column:
+                  name: shipping_address_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+
+              - column:
+                  name: billing_address_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+
+        - addForeignKeyConstraint:
+            baseTableName: orders
+            baseColumnNames: coupon_id
+            referencedTableName: coupons
+            referencedColumnNames: id
+            constraintName: fk_orders_coupon
+
+        - addForeignKeyConstraint:
+            baseTableName: orders
+            baseColumnNames: shipping_address_id
+            referencedTableName: addresses
+            referencedColumnNames: id
+            constraintName: fk_orders_shipping_address
+
+        - addForeignKeyConstraint:
+            baseTableName: orders
+            baseColumnNames: billing_address_id
+            referencedTableName: addresses
+            referencedColumnNames: id
+            constraintName: fk_orders_billing_address
+
+        - createIndex:
+            tableName: orders
+            indexName: idx_orders_order_number
+            columns:
+              - column:
+                  name: order_number
+
+        # Update existing orders with order numbers and subtotal
+        - sql:
+            sql: UPDATE orders SET order_number = CONCAT('ORD-LEGACY-', id) WHERE order_number IS NULL
+
+        - sql:
+            sql: UPDATE orders SET subtotal = total WHERE subtotal = 0
