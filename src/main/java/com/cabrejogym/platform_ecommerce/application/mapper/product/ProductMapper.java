@@ -1,44 +1,38 @@
 package com.cabrejogym.platform_ecommerce.application.mapper.product;
 
-import com.cabrejogym.platform_ecommerce.application.dtos.request.CreateProductRequest;
-import com.cabrejogym.platform_ecommerce.application.dtos.request.UpdateProductRequest;
 import com.cabrejogym.platform_ecommerce.application.dtos.response.ProductDTO;
+import com.cabrejogym.platform_ecommerce.application.mapper.BaseMapperConfig;
+import com.cabrejogym.platform_ecommerce.application.mapper.brand.BrandMapper;
+import com.cabrejogym.platform_ecommerce.application.mapper.category.CategoryMapper;
+import com.cabrejogym.platform_ecommerce.application.mapper.tag.TagMapper;
 import com.cabrejogym.platform_ecommerce.domain.entity.Product;
-import org.mapstruct.*;
+import com.cabrejogym.platform_ecommerce.domain.entity.ProductTag;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Mapper(config = BaseMapperConfig.class, uses = {CategoryMapper.class, BrandMapper.class, ProductVariantMapper.class, ProductImageMapper.class, TagMapper.class})
 public interface ProductMapper {
 
-    @Mappings({
-            @Mapping(target = "id", source = "id"),
-            @Mapping(target = "name", source = "name"),
-            @Mapping(target = "description", source = "description"),
-            @Mapping(target = "price", source = "price"),
-            @Mapping(target = "hasDiscount", source = "hasDiscount"),
-            @Mapping(target = "discountPercent", source = "discountPercent"),
-            @Mapping(target = "stock", source = "stock")
-    })
-    ProductDTO toDto(Product product);
+    @Mapping(target = "tags", expression = "java(mapTags(product))")
+    ProductDTO toDTO(Product product);
 
-    @Mappings({
-            @Mapping(target = "id", ignore = true),
-            @Mapping(target = "name", source = "name"),
-            @Mapping(target = "description", source = "description"),
-            @Mapping(target = "price", source = "price"),
-            @Mapping(target = "hasDiscount", source = "hasDiscount"),
-            @Mapping(target = "discountPercent", source = "discountPercent"),
-            @Mapping(target = "stock", source = "stock")
-    })
-    Product toEntity(CreateProductRequest request);
+    List<ProductDTO> toDTOList(List<Product> products);
 
-    @Mappings({
-            @Mapping(target = "id", ignore = true),
-            @Mapping(target = "name", source = "name"),
-            @Mapping(target = "description", source = "description"),
-            @Mapping(target = "price", source = "price"),
-            @Mapping(target = "hasDiscount", source = "hasDiscount"),
-            @Mapping(target = "discountPercent", source = "discountPercent"),
-            @Mapping(target = "stock", source = "stock")
-    })
-    void updateEntity(@MappingTarget Product product, UpdateProductRequest request);
+    default List<com.cabrejogym.platform_ecommerce.application.dtos.response.TagDTO> mapTags(Product product) {
+        if (product.getTags() == null) {
+            return List.of();
+        }
+        return product.getTags().stream()
+                .map(ProductTag::getTag)
+                .map(tag -> new com.cabrejogym.platform_ecommerce.application.dtos.response.TagDTO(
+                        tag.getId(),
+                        tag.getName(),
+                        tag.getSlug()
+                ))
+                .collect(Collectors.toList());
+    }
 }
+

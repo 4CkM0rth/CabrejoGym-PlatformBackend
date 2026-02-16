@@ -21,20 +21,79 @@ databaseChangeLog:
                     nullable: false
 
               - column:
+                  name: order_number
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+              - column:
                   name: status
                   type: VARCHAR(50)
                   constraints:
                     nullable: false
 
               - column:
-                  name: total
+                  name: subtotal
                   type: DECIMAL(19,2)
                   defaultValueNumeric: 0
                   constraints:
                     nullable: false
 
               - column:
+                  name: discount
+                  type: DECIMAL(19,2)
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: tax
+                  type: DECIMAL(19,2)
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: shipping
+                  type: DECIMAL(19,2)
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: total
+                  type: DECIMAL(19,2)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: coupon_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+
+              - column:
+                  name: shipping_address_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+
+              - column:
+                  name: billing_address_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+
+              - column:
                   name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: updated_at
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
                   constraints:
@@ -47,6 +106,27 @@ databaseChangeLog:
             referencedColumnNames: id
             constraintName: fk_orders_user
 
+        - addForeignKeyConstraint:
+            baseTableName: orders
+            baseColumnNames: coupon_id
+            referencedTableName: coupons
+            referencedColumnNames: id
+            constraintName: fk_orders_coupon
+
+        - addForeignKeyConstraint:
+            baseTableName: orders
+            baseColumnNames: shipping_address_id
+            referencedTableName: addresses
+            referencedColumnNames: id
+            constraintName: fk_orders_shipping_address
+
+        - addForeignKeyConstraint:
+            baseTableName: orders
+            baseColumnNames: billing_address_id
+            referencedTableName: addresses
+            referencedColumnNames: id
+            constraintName: fk_orders_billing_address
+
         - createIndex:
             tableName: orders
             indexName: idx_orders_user_id
@@ -56,7 +136,22 @@ databaseChangeLog:
 
         - createIndex:
             tableName: orders
-            indexName: idx_orders_created_at
+            indexName: idx_orders_order_number
             columns:
               - column:
-                  name: created_at
+                  name: order_number
+
+        - createIndex:
+            tableName: orders
+            indexName: idx_orders_status
+            columns:
+              - column:
+                  name: status
+
+        - sql:
+            sql: |
+              ALTER TABLE orders
+              MODIFY updated_at TIMESTAMP NOT NULL
+              DEFAULT CURRENT_TIMESTAMP
+              ON UPDATE CURRENT_TIMESTAMP;
+

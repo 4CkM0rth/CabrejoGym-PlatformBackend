@@ -1,0 +1,81 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-create-branches
+      author: sebastian
+      changes:
+        - createTable:
+            tableName: branches
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: VARCHAR(120)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: city
+                  type: VARCHAR(80)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: address
+                  type: VARCHAR(180)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: phone
+                  type: VARCHAR(30)
+
+              - column:
+                  name: email
+                  type: VARCHAR(120)
+
+              - column:
+                  name: opening_hours
+                  type: VARCHAR(255)
+
+              - column:
+                  name: latitude
+                  type: DECIMAL(10,7)
+
+              - column:
+                  name: longitude
+                  type: DECIMAL(10,7)
+
+              - column:
+                  name: active
+                  type: BIT(1)
+                  defaultValueBoolean: 1
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+            tableName: branches
+            indexName: idx_branches_city
+            columns:
+              - column:
+                  name: city
+
+        - createIndex:
+            tableName: branches
+            indexName: idx_branches_active
+            columns:
+              - column:
+                  name: active

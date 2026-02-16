@@ -18,7 +18,7 @@ public record CreateAddressRequest(
         @NotBlank
         String state,
         @NotBlank
-        @Pattern(regexp = "^\\d{5}(-\\d{4})?$", message = "Código postal inválido")
+        @Pattern(regexp = "^[0-9]{4,10}(-[0-9]{1,4})?$", message = "Código postal inválido")
         String zipCode,
         @NotBlank
         String country,

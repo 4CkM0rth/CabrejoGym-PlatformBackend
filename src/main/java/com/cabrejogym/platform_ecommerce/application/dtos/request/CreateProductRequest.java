@@ -11,6 +11,8 @@ public record CreateProductRequest(
         @NotBlank
         String description,
 
+        String shortDescription,
+
         @NotNull @Positive
         BigDecimal price,
 
@@ -23,6 +25,12 @@ public record CreateProductRequest(
         BigDecimal discountPercent,
 
         @NotNull @PositiveOrZero
-        Integer stock
+        Integer stock,
+
+        Long categoryId,
+
+        Long brandId,
+
+        Boolean hasVariants
 ) {
 }

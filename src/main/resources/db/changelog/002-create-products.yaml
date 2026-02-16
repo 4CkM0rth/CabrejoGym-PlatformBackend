@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 002-create-products
-      author: cabrejogym
+      author: sebastian
       changes:
         - createTable:
             tableName: products
@@ -22,7 +22,7 @@ databaseChangeLog:
 
               - column:
                   name: description
-                  type: VARCHAR(255)
+                  type: TEXT
                   constraints:
                     nullable: false
 
@@ -46,3 +46,98 @@ databaseChangeLog:
                   defaultValueNumeric: 0
                   constraints:
                     nullable: false
+
+              - column:
+                  name: stock
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: slug
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+
+              - column:
+                  name: short_description
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: true
+
+              - column:
+                  name: category_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+
+              - column:
+                  name: brand_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: DRAFT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: has_variants
+                  type: TINYINT(1)
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+            tableName: products
+            indexName: idx_products_slug
+            unique: true
+            columns:
+              - column:
+                  name: slug
+
+        - createIndex:
+            tableName: products
+            indexName: idx_products_status
+            columns:
+              - column:
+                  name: status
+
+        - createIndex:
+            tableName: products
+            indexName: idx_products_category_id
+            columns:
+              - column:
+                  name: category_id
+
+        - createIndex:
+            tableName: products
+            indexName: idx_products_brand_id
+            columns:
+              - column:
+                  name: brand_id
+
+        - sql:
+            sql: |
+              ALTER TABLE products
+              MODIFY updated_at TIMESTAMP NOT NULL
+              DEFAULT CURRENT_TIMESTAMP
+              ON UPDATE CURRENT_TIMESTAMP;

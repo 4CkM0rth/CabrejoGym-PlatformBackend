@@ -1,0 +1,100 @@
+databaseChangeLog:
+  - changeSet:
+      id: 010-create-coupons
+      author: sebastian
+      validCheckSum: ANY
+      changes:
+        - createTable:
+            tableName: coupons
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: code
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+              - column:
+                  name: type
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: value
+                  type: DECIMAL(19,2)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: min_purchase
+                  type: DECIMAL(19,2)
+                  constraints:
+                    nullable: true
+
+              - column:
+                  name: max_discount
+                  type: DECIMAL(19,2)
+                  constraints:
+                    nullable: true
+
+              - column:
+                  name: usage_limit
+                  type: INT
+                  constraints:
+                    nullable: true
+
+              - column:
+                  name: usage_count
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: valid_from
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: valid_until
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: active
+                  type: TINYINT(1)
+                  defaultValueNumeric: 1
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+            tableName: coupons
+            indexName: idx_coupons_code
+            columns:
+              - column:
+                  name: code
+
+        - createIndex:
+            tableName: coupons
+            indexName: idx_coupons_active
+            columns:
+              - column:
+                  name: active
