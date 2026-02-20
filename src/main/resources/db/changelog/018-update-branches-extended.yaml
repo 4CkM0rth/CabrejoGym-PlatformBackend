@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 018-update-branches-extended
+      author: sebastian
+      changes:
+        - addColumn:
+            tableName: branches
+            columns:
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: capacity
+                  type: INT
+              - column:
+                  name: area_sqm
+                  type: INT

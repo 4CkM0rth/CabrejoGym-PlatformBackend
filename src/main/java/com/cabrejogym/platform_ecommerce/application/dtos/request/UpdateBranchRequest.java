@@ -5,13 +5,13 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 
 public record UpdateBranchRequest (
-        @NotBlank @Size(max = 120)
+        @Size(max = 120)
         String name,
 
-        @NotBlank @Size(max = 80)
+        @Size(max = 80)
         String city,
 
-        @NotBlank @Size(max = 180)
+        @Size(max = 180)
         String address,
 
         @Size(max = 30)
@@ -23,11 +23,19 @@ public record UpdateBranchRequest (
         @Size(max = 255)
         String openingHours,
 
+        String description,
+
         @DecimalMin(value = "-90.0")
         @DecimalMax(value = "90.0")
         BigDecimal latitude,
 
         @DecimalMin(value = "-180.0")
         @DecimalMax(value = "180.0")
-        BigDecimal longitude
+        BigDecimal longitude,
+
+        @Min(0)
+        Integer capacity,
+
+        @Min(0)
+        Integer areaSqm
 ) {}

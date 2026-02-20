@@ -40,12 +40,15 @@ public class Order {
     private BigDecimal subtotal;
 
     @Column(nullable = false, precision = 19, scale = 2)
+    @Builder.Default
     private BigDecimal discount = BigDecimal.ZERO;
 
     @Column(nullable = false, precision = 19, scale = 2)
+    @Builder.Default
     private BigDecimal tax = BigDecimal.ZERO;
 
     @Column(nullable = false, precision = 19, scale = 2)
+    @Builder.Default
     private BigDecimal shipping = BigDecimal.ZERO;
 
     @Column(nullable = false, precision = 19, scale = 2)

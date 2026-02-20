@@ -17,8 +17,13 @@ public record CreateBranchRequest(
         String email,
         @Size(max = 255)
         String openingHours,
+        String description,
         @DecimalMin(value = "-90.0") @DecimalMax(value = "90.0")
         BigDecimal latitude,
         @DecimalMin(value = "-180.0") @DecimalMax(value = "180.0")
-        BigDecimal longitude
+        BigDecimal longitude,
+        @Min(0)
+        Integer capacity,
+        @Min(0)
+        Integer areaSqm
 ) {}

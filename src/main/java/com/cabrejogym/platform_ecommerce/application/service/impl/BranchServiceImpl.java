@@ -7,6 +7,7 @@ import com.cabrejogym.platform_ecommerce.application.mapper.branch.BranchMapper;
 import com.cabrejogym.platform_ecommerce.infrastructure.exceptions.ResourceNotFoundException;
 import com.cabrejogym.platform_ecommerce.domain.entity.Branch;
 import com.cabrejogym.platform_ecommerce.infrastructure.repository.BranchRepository;
+import com.cabrejogym.platform_ecommerce.infrastructure.repository.BranchReviewRepository;
 import com.cabrejogym.platform_ecommerce.application.service.BranchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.List;
 public class BranchServiceImpl implements BranchService {
 
     private final BranchRepository branchRepository;
+    private final BranchReviewRepository reviewRepository;
     private final BranchMapper branchMapper;
 
     @Override
@@ -45,7 +47,20 @@ public class BranchServiceImpl implements BranchService {
     @Override
     @Transactional(readOnly = true)
     public BranchDTO getById(Long id) {
-        return branchMapper.toDto(getOrThrow(id));
+        Branch branch = getOrThrow(id);
+        BranchDTO dto = branchMapper.toDto(branch);
+        
+        // Agregar ratings
+        Double avgRating = reviewRepository.getAverageRatingByBranchId(id);
+        Long totalReviews = reviewRepository.countApprovedReviewsByBranchId(id);
+        
+        return new BranchDTO(
+                dto.id(), dto.name(), dto.city(), dto.address(), dto.phone(), dto.email(),
+                dto.openingHours(), dto.description(), dto.latitude(), dto.longitude(),
+                dto.capacity(), dto.areaSqm(), dto.active(), dto.createdAt(),
+                dto.images(), dto.amenities(), dto.membershipPlans(),
+                avgRating, totalReviews
+        );
     }
 
     @Override

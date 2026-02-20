@@ -33,3 +33,13 @@ databaseChangeLog:
       file: db/changelog/016-create-product-variants.yaml
   - include:
       file: db/changelog/017-create-product-images.yaml
+  - include:
+      file: db/changelog/018-update-branches-extended.yaml
+  - include:
+      file: db/changelog/019-create-branch-images.yaml
+  - include:
+      file: db/changelog/020-create-branch-amenities.yaml
+  - include:
+      file: db/changelog/021-create-branch-reviews.yaml
+  - include:
+      file: db/changelog/022-create-membership-plans.yaml
