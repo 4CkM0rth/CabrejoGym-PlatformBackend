@@ -1,6 +1,7 @@
 package com.cabrejogym.platform_ecommerce.application.service;
 
 import com.cabrejogym.platform_ecommerce.application.dtos.request.CreateProductRequest;
+import com.cabrejogym.platform_ecommerce.application.dtos.request.ProductSearchCriteria;
 import com.cabrejogym.platform_ecommerce.application.dtos.request.UpdateProductRequest;
 import com.cabrejogym.platform_ecommerce.application.dtos.response.ProductDTO;
 import com.cabrejogym.platform_ecommerce.domain.enums.PublicationStatus;
@@ -24,6 +25,7 @@ public interface ProductService {
     Page<ProductDTO> searchProducts(String query, int page, int size);
     Page<ProductDTO> filterProducts(Long categoryId, Long brandId, BigDecimal minPrice, BigDecimal maxPrice, 
                                      PublicationStatus status, Boolean inStock, int page, int size);
+    Page<ProductDTO> advancedSearch(ProductSearchCriteria criteria, int page, int size);
     ProductDTO publishProduct(Long id);
     ProductDTO unpublishProduct(Long id);
     ProductDTO addTagToProduct(Long productId, Long tagId);

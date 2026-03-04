@@ -60,6 +60,9 @@ public class SecurityConfig {
                         // Checkout totals (public - can calculate without auth)
                         .requestMatchers(HttpMethod.GET, "/api/checkout/totals").permitAll()
 
+                        // Payment endpoints (require authentication)
+                        .requestMatchers("/api/payments/**").authenticated()
+
                         .anyRequest().authenticated()
                 );
 

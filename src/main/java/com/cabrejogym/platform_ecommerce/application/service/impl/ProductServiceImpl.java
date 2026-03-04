@@ -1,6 +1,7 @@
 package com.cabrejogym.platform_ecommerce.application.service.impl;
 
 import com.cabrejogym.platform_ecommerce.application.dtos.request.CreateProductRequest;
+import com.cabrejogym.platform_ecommerce.application.dtos.request.ProductSearchCriteria;
 import com.cabrejogym.platform_ecommerce.application.dtos.request.UpdateProductRequest;
 import com.cabrejogym.platform_ecommerce.application.dtos.response.ProductDTO;
 import com.cabrejogym.platform_ecommerce.application.mapper.product.ProductMapper;
@@ -189,6 +190,51 @@ public class ProductServiceImpl implements ProductService {
         PageRequest pageable = PageRequest.of(page, size);
         return productRepository.filterProducts(categoryId, brandId, minPrice, maxPrice, status, inStock, pageable)
                 .map(productMapper::toDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductDTO> advancedSearch(ProductSearchCriteria criteria, int page, int size) {
+        int safePage = Math.max(page, 0);
+        int normalizedSize = (size <= 0) ? DEFAULT_PAGE_SIZE : size;
+        int safeSize = Math.min(normalizedSize, MAX_PAGE_SIZE);
+
+        // Build sort
+        Sort sort = buildSort(criteria.sortBy(), criteria.sortDirection());
+        PageRequest pageable = PageRequest.of(safePage, safeSize, sort);
+
+        // Check if we should filter by tags
+        boolean filterByTags = criteria.tagIds() != null && !criteria.tagIds().isEmpty();
+        List<Long> tagIds = filterByTags ? criteria.tagIds() : List.of();
+
+        // Execute search
+        return productRepository.advancedSearch(
+                criteria.query(),
+                criteria.status(),
+                criteria.categoryId(),
+                criteria.brandId(),
+                criteria.minPrice(),
+                criteria.maxPrice(),
+                criteria.hasDiscount(),
+                criteria.inStock(),
+                filterByTags,
+                tagIds,
+                pageable
+        ).map(productMapper::toDTO);
+    }
+
+    private Sort buildSort(String sortBy, String sortDirection) {
+        Sort.Direction direction = "asc".equalsIgnoreCase(sortDirection) 
+                ? Sort.Direction.ASC 
+                : Sort.Direction.DESC;
+
+        return switch (sortBy.toLowerCase()) {
+            case "price" -> Sort.by(direction, "price");
+            case "name" -> Sort.by(direction, "name");
+            case "discount" -> Sort.by(direction, "discountPercent");
+            case "createdat", "created" -> Sort.by(direction, "createdAt");
+            default -> Sort.by(Sort.Direction.DESC, "createdAt");
+        };
     }
 
     @Override

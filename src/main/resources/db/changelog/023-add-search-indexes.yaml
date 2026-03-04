@@ -1,0 +1,153 @@
+databaseChangeLog:
+  - changeSet:
+      id: 023-add-search-indexes
+      author: system
+      changes:
+        # Products table indexes for search optimization (skip if exists)
+        - createIndex:
+            indexName: idx_products_status
+            tableName: products
+            columns:
+              - column:
+                  name: status
+        
+        - createIndex:
+            indexName: idx_products_category_id
+            tableName: products
+            columns:
+              - column:
+                  name: category_id
+        
+        - createIndex:
+            indexName: idx_products_brand_id
+            tableName: products
+            columns:
+              - column:
+                  name: brand_id
+        
+        - createIndex:
+            indexName: idx_products_price
+            tableName: products
+            columns:
+              - column:
+                  name: price
+        
+        - createIndex:
+            indexName: idx_products_stock
+            tableName: products
+            columns:
+              - column:
+                  name: stock
+        
+        - createIndex:
+            indexName: idx_products_has_discount
+            tableName: products
+            columns:
+              - column:
+                  name: has_discount
+        
+        - createIndex:
+            indexName: idx_products_created_at
+            tableName: products
+            columns:
+              - column:
+                  name: created_at
+                  descending: true
+        
+        # Composite indexes for common filter combinations
+        - createIndex:
+            indexName: idx_products_status_category
+            tableName: products
+            columns:
+              - column:
+                  name: status
+              - column:
+                  name: category_id
+        
+        - createIndex:
+            indexName: idx_products_status_brand
+            tableName: products
+            columns:
+              - column:
+                  name: status
+              - column:
+                  name: brand_id
+        
+        - createIndex:
+            indexName: idx_products_status_price
+            tableName: products
+            columns:
+              - column:
+                  name: status
+              - column:
+                  name: price
+        
+        # Product tags index
+        - createIndex:
+            indexName: idx_product_tags_tag_id
+            tableName: product_tags
+            columns:
+              - column:
+                  name: tag_id
+        
+        - createIndex:
+            indexName: idx_product_tags_product_id
+            tableName: product_tags
+            columns:
+              - column:
+                  name: product_id
+        
+        # Categories index
+        - createIndex:
+            indexName: idx_categories_active
+            tableName: categories
+            columns:
+              - column:
+                  name: active
+        
+        # Brands index
+        - createIndex:
+            indexName: idx_brands_active
+            tableName: brands
+            columns:
+              - column:
+                  name: active
+        
+        # Branches indexes for search
+        - createIndex:
+            indexName: idx_branches_city
+            tableName: branches
+            columns:
+              - column:
+                  name: city
+        
+        - createIndex:
+            indexName: idx_branches_active
+            tableName: branches
+            columns:
+              - column:
+                  name: active
+        
+        # Branch reviews indexes
+        - createIndex:
+            indexName: idx_branch_reviews_branch_id
+            tableName: branch_reviews
+            columns:
+              - column:
+                  name: branch_id
+        
+        - createIndex:
+            indexName: idx_branch_reviews_status
+            tableName: branch_reviews
+            columns:
+              - column:
+                  name: status
+        
+        - createIndex:
+            indexName: idx_branch_reviews_branch_status
+            tableName: branch_reviews
+            columns:
+              - column:
+                  name: branch_id
+              - column:
+                  name: status

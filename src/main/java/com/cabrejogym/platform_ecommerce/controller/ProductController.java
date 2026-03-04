@@ -3,6 +3,7 @@ package com.cabrejogym.platform_ecommerce.controller;
 import com.cabrejogym.platform_ecommerce.application.dtos.request.CreateProductImageRequest;
 import com.cabrejogym.platform_ecommerce.application.dtos.request.CreateProductRequest;
 import com.cabrejogym.platform_ecommerce.application.dtos.request.CreateProductVariantRequest;
+import com.cabrejogym.platform_ecommerce.application.dtos.request.ProductSearchCriteria;
 import com.cabrejogym.platform_ecommerce.application.dtos.request.UpdateProductRequest;
 import com.cabrejogym.platform_ecommerce.application.dtos.request.UpdateProductVariantRequest;
 import com.cabrejogym.platform_ecommerce.application.dtos.request.UpdateStockRequest;
@@ -64,6 +65,29 @@ public class ProductController {
                                    @RequestParam(defaultValue = "0") int page,
                                    @RequestParam(defaultValue = "20") int size) {
         return productService.filterProducts(categoryId, brandId, minPrice, maxPrice, status, inStock, page, size);
+    }
+
+    @GetMapping("/advanced-search")
+    public Page<ProductDTO> advancedSearch(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Long brandId,
+            @RequestParam(required = false) List<Long> tagIds,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Boolean hasDiscount,
+            @RequestParam(required = false) Boolean inStock,
+            @RequestParam(required = false) PublicationStatus status,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDirection,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        
+        ProductSearchCriteria criteria = new ProductSearchCriteria(
+                query, categoryId, brandId, tagIds, minPrice, maxPrice,
+                hasDiscount, inStock, status, sortBy, sortDirection
+        );
+        return productService.advancedSearch(criteria, page, size);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido a CabrejoGym</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏋️ CabrejoGym</h1>
+        <p>Tu tienda de fitness y suplementos</p>
+    </div>
+    <div class="content">
+        <h2>¡Bienvenido, <span th:text="${userName}">Usuario</span>!</h2>
+        <p>Gracias por registrarte en CabrejoGym. Estamos emocionados de tenerte con nosotros.</p>
+        <p>Tu cuenta ha sido creada exitosamente con el email: <strong th:text="${userEmail}">email@example.com</strong></p>
+        
+        <p>Ahora puedes:</p>
+        <ul>
+            <li>Explorar nuestro catálogo de productos</li>
+            <li>Comprar suplementos y equipamiento deportivo</li>
+            <li>Conocer nuestras sedes de gimnasios</li>
+            <li>Acceder a ofertas exclusivas</li>
+        </ul>
+        
+        <center>
+            <a th:href="${frontendUrl}" class="button">Ir a la Tienda</a>
+        </center>
+        
+        <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
+        <p>¡Que tengas un excelente día!</p>
+    </div>
+    <div class="footer">
+        <p>© 2026 CabrejoGym. Todos los derechos reservados.</p>
+        <p>Este es un email automático, por favor no respondas a este mensaje.</p>
+    </div>
+</body>
+</html>

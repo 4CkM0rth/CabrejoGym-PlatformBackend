@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -83,6 +84,37 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             @Param("maxPrice") BigDecimal maxPrice,
             @Param("status") PublicationStatus status,
             @Param("inStock") Boolean inStock,
+            Pageable pageable
+    );
+    
+    // Advanced search with all filters combined
+    @Query("""
+           SELECT DISTINCT p FROM Product p
+           LEFT JOIN p.tags pt
+           WHERE (:query IS NULL OR :query = '' 
+                  OR LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%'))
+                  OR LOWER(p.description) LIKE LOWER(CONCAT('%', :query, '%'))
+                  OR LOWER(p.shortDescription) LIKE LOWER(CONCAT('%', :query, '%')))
+           AND (:status IS NULL OR p.status = :status)
+           AND (:categoryId IS NULL OR p.category.id = :categoryId)
+           AND (:brandId IS NULL OR p.brand.id = :brandId)
+           AND (:minPrice IS NULL OR p.price >= :minPrice)
+           AND (:maxPrice IS NULL OR p.price <= :maxPrice)
+           AND (:hasDiscount IS NULL OR p.hasDiscount = :hasDiscount)
+           AND (:inStock IS NULL OR (:inStock = true AND p.stock > 0) OR (:inStock = false))
+           AND (:filterByTags = false OR pt.tag.id IN :tagIds)
+           """)
+    Page<Product> advancedSearch(
+            @Param("query") String query,
+            @Param("status") PublicationStatus status,
+            @Param("categoryId") Long categoryId,
+            @Param("brandId") Long brandId,
+            @Param("minPrice") BigDecimal minPrice,
+            @Param("maxPrice") BigDecimal maxPrice,
+            @Param("hasDiscount") Boolean hasDiscount,
+            @Param("inStock") Boolean inStock,
+            @Param("filterByTags") boolean filterByTags,
+            @Param("tagIds") List<Long> tagIds,
             Pageable pageable
     );
     

@@ -43,3 +43,5 @@ databaseChangeLog:
       file: db/changelog/021-create-branch-reviews.yaml
   - include:
       file: db/changelog/022-create-membership-plans.yaml
+  - include:
+      file: db/changelog/024-create-payments.yaml
